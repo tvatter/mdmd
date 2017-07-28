@@ -6,8 +6,12 @@
 \alias{logLik.dfcop}
 \alias{AIC.dfcop}
 \alias{BIC.dfcop}
+\alias{coef.dfcop}
+\alias{vcov.dfcop}
 \alias{fitted.dfcop}
 \alias{logLik.dfcop}
+\alias{coef.dfcop}
+\alias{vcov.dfcop}
 \title{S3 methods for discrete factor copula model}
 \usage{
 \method{predict}{dfcop}(object, newdata, ...)
@@ -15,6 +19,10 @@
 \method{fitted}{dfcop}(object, ...)
 
 \method{logLik}{dfcop}(object, ...)
+
+\method{coef}{dfcop}(object, ...)
+
+\method{vcov}{dfcop}(object, ...)
 }
 \arguments{
 \item{object}{a \code{dfcop} object.}
@@ -31,6 +39,8 @@ Currently available:
 \item{\code{logLik}}{Log-likelihood at the MLE.}
 \item{\code{AIC}}{Akaike's Information Criterion (see \link{AIC}).}
 \item{\code{BIC}}{Bayesian Information Criterion (see \link{BIC}).}
+\item{\code{coef}}{The MLE.}
+\item{\code{vcov}}{Variance-covariance matrix at the MLE.}
 }
 }
 \examples{

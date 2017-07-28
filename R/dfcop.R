@@ -144,9 +144,11 @@ fitOne <- function(family, prob, data, rule) {
 #' \item{`logLik`}{Log-likelihood at the MLE.}
 #' \item{`AIC`}{Akaike's Information Criterion (see \link{AIC}).}
 #' \item{`BIC`}{Bayesian Information Criterion (see \link{BIC}).}
+#' \item{`coef`}{The MLE.}
+#' \item{`vcov`}{Variance-covariance matrix at the MLE.}
 #' }
 #'
-#' @aliases fitted.dfcop logLik.dfcop AIC.dfcop BIC.dfcop
+#' @aliases fitted.dfcop logLik.dfcop AIC.dfcop BIC.dfcop coef.dfcop vcov.dfcop
 #'
 #' @param object a `dfcop` object.
 #' @param newdata points where the fit shall be evaluated.
@@ -203,3 +205,10 @@ logLik.dfcop <- function(object, ...) {
   val
 }
 
+#' @rdname predict.dfcop
+#' @export
+coef.dfcop <- function(object, ...) as.numeric(object$bicop$parameters)
+
+#' @rdname predict.dfcop
+#' @export
+vcov.dfcop <- function(object, ...) object$vcov
