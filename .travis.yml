@@ -25,8 +25,8 @@ before_install:
   - cd rvinecopulib
   - git checkout dev
   - cd ..
-  - R CMD build rvinecopulib
-  - R CMD install rvinecopulib
+  - R CMD BUILD rvinecopulib 
+  - R CMD INSTALL rvinecopulib
 
 repos:
   CRAN: http://cran.rstudio.com
