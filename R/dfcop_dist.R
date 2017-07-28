@@ -1,6 +1,6 @@
 #' A discrete factor copula distribution
 #' 
-#' A dicrete factor copula distribution is specified by:
+#' A S3 class to store discrete factor copula distributions.
 #'
 #' @param prob the marginal probabilities, a vector of numbers in (0,1).
 #' @param family the copula family, a string containing the family name (see

@@ -33,7 +33,7 @@ test_that("aic/bic for dfcop works", {
 
 })
 
-test_that("predict/fitted/loglik methods dfcop works", {
+test_that("predict/fitted methods dfcop works", {
   set.seed(0)
   # Sample size, dimension, correlation parameter
   n <- 1e3
@@ -52,8 +52,8 @@ test_that("predict/fitted/loglik methods dfcop works", {
   
   # The methods work as expected
   expect_equal(predict(fit, X), fitted(fit))
-  expect_is(logLik(fit), "numeric")
-  expect_equivalent(names(attributes(logLik(fit))), "df")
+  expect_s3_class(logLik(fit), "logLik")
+  expect_equivalent(names(attributes(logLik(fit))), c("nobs", "df", "class"))
   
   expect_error(predict(fit))
   fit$data <- NULL
