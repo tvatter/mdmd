@@ -54,5 +54,9 @@ test_that("predict/fitted/loglik methods dfcop works", {
   expect_equal(predict(fit, X), fitted(fit))
   expect_is(logLik(fit), "numeric")
   expect_equivalent(names(attributes(logLik(fit))), "df")
+  
+  expect_error(predict(fit))
+  expect_error(fitted(dfcop))
+  expect_error(logLik(dfcop))
 
 })
