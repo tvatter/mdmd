@@ -1,0 +1,41 @@
+dist: trusty
+
+language: R
+warnings_are_errors: true
+
+r:
+  - oldrel
+  - release
+  - devel
+
+sudo: required
+
+apt_packages:
+  - r-cran-BH
+  - r-cran-covr
+  - r-cran-graphics
+  - r-cran-grDevices
+  - r-cran-lattice
+  - r-cran-Rcpp
+  - r-cran-RcppEigen
+  - r-cran-statmod
+  - r-cran-stats
+  - r-cran-testthat
+  - r-cran-utils
+
+before_install:
+  - sudo add-apt-repository ppa:marutter/c2d4u -y
+  - sudo apt-get update -q
+  - git clone https://github.com/vinecopulib/rvinecopulib
+  - cd rvinecopulib
+  - git checkout origin/dev
+  - cd ..
+  - R CMD build rvinecopulib
+  - R CMD install rvinecopulib_0.0.1.9000.tar.gz
+
+repos:
+  CRAN: http://cran.rstudio.com
+
+
+after_success:
+  - Rscript -e 'covr::codecov()'

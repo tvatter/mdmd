@@ -1,0 +1,23 @@
+Package: mdmd
+Title: Multivariate Discrete Mixture Distributions
+Version: 0.1
+Date: 2017-07-26
+Authors@R: c(
+    person("Damien", "Ackerer",, "damien.ackerer@gmail.com", role = "aut"),
+    person("Thibault", "Vatter",, "thibault.vatter@gmail.com", role = c("aut", "cre"))
+    )
+Description: Tools to model multivariate discrete data using mixture distributions.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+  Rcpp,
+  rvinecopulib,
+  statmod,
+  stats
+LinkingTo:
+  Rcpp,
+  RcppEigen
+Suggests: testthat
+RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)

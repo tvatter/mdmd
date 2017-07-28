@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#include \"RcppEigen.h\"\n\n\n// [[Rcpp::depends(RcppEigen)]]\n\n// distribution for the dfcop\n//\n// [[Rcpp::export]]\nEigen::VectorXd dfcop_pdf_cpp(const Eigen::VectorXd& w, \n                              const Eigen::MatrixXd& pv,\n                              const Eigen::MatrixXd& x)\n{\n  int n = x.rows();\n  int d = x.cols();\n  int m = w.size();\n  \n  Eigen::VectorXd result(n);\n  Eigen::VectorXd ones = Eigen::VectorXd::Ones(m);\n  Eigen::RowVectorXd wt = w.transpose();\n\n  Eigen::MatrixXd tmp(pv);\n  for(int i = 0; i < n; i++) {\n    for(int j = 0; j < d; j++) {\n      if(x(i,j) == 1) {\n        tmp.col(j) = pv.col(j);\n      } else {\n        tmp.col(j) = ones - pv.col(j);\n      }\n    }\n    result(i) = wt * tmp.rowwise().prod();\n  }\n \n  return result;\n}\n",
+    "created" : 1501248425908.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4108280185",
+    "id" : "8D3CB0A0",
+    "lastKnownWriteTime" : 1501099361,
+    "last_content_update" : 1501099361,
+    "path" : "~/Desktop/CopulaCDO/code/Thibault/mdmd/src/dfcop.cpp",
+    "project_path" : "src/dfcop.cpp",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "cpp"
+}

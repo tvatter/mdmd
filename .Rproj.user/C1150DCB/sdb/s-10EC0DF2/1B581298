@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "dist: trusty\n\nlanguage: R\nwarnings_are_errors: true\n\nr:\n  - oldrel\n  - release\n  - devel\n\nsudo: required\n\napt_packages:\n  - r-cran-BH\n  - r-cran-covr\n  - r-cran-graphics\n  - r-cran-grDevices\n  - r-cran-lattice\n  - r-cran-Rcpp\n  - r-cran-RcppEigen\n  - r-cran-statmod\n  - r-cran-stats\n  - r-cran-testthat\n  - r-cran-utils\n\nbefore_install:\n  - sudo add-apt-repository ppa:marutter/c2d4u -y\n  - sudo apt-get update -q\n  - git clone https://github.com/vinecopulib/rvinecopulib\n  - cd rvinecopulib\n  - git checkout origin/dev\n  - cd ..\n  - R CMD build rvinecopulib\n  - R CMD install rvinecopulib_0.0.1.9000.tar.gz\n\nrepos:\n  CRAN: http://cran.rstudio.com\n\n\nafter_success:\n  - Rscript -e 'covr::codecov()'",
+    "created" : 1501251064067.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "39698725",
+    "id" : "1B581298",
+    "lastKnownWriteTime" : 1501251597,
+    "last_content_update" : 1501251597928,
+    "path" : "~/Dropbox/CopulaCDO/code/Thibault/mdmd/.travis.yml",
+    "project_path" : ".travis.yml",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "yaml"
+}

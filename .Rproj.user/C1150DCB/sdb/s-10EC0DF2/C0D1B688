@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "context(\"Class 'dfcop'\")\n\ntest_that(\"dummy call creates proper dfcop object\", {\n  X <- matrix(rbinom(1e3*3,1,0.5), ncol = 3)\n  fit <- dfcop(X, \"indep\")\n  expect_s3_class(fit, \"dfcop_dist\")\n  expect_s3_class(fit, \"dfcop\")\n  expect_identical(names(fit), c(\"prob\", \"bicop\", \"npar\", \"data\"))\n})\n\ntest_that(\"aic/bic for dfcop works\", {\n  set.seed(0)\n  # Sample size, dimension, correlation parameter\n  n <- 1e3\n  d <- 1e1\n  rho <- 0.7\n  \n  # The model\n  prob <- runif(d)\n  dfcop <- dfcop_dist(prob, \"gaussian\", rho)\n  \n  # Data\n  X <- rdfcop(n, dfcop)\n\n  expect_identical(dfcop(X, selcrit = \"aic\")$bicop$family, \"gaussian\")\n  expect_identical(dfcop(X, selcrit = \"bic\")$bicop$family, \"gaussian\")\n})",
+    "created" : 1501248660003.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1760861880",
+    "id" : "C0D1B688",
+    "lastKnownWriteTime" : 1501250967,
+    "last_content_update" : 1501250967893,
+    "path" : "~/Dropbox/CopulaCDO/code/Thibault/mdmd/tests/testthat/test_dfcop.R",
+    "project_path" : "tests/testthat/test_dfcop.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,17 @@
+[
+    {
+        "definitions" : [
+            {
+                "column" : 17,
+                "file" : "/home/damien/Desktop/CopulaCDO/code/Thibault/mdmd/src/dfcop.cpp",
+                "kind" : 6,
+                "line" : 9,
+                "name" : "dfcop_pdf_cpp(const Eigen::VectorXd &, const Eigen::MatrixXd &, const Eigen::MatrixXd &)",
+                "parent_name" : "",
+                "usr" : "c:@F@dfcop_pdf_cpp#&1$@N@Eigen@C@Matrix>#d#VI-1#VI1#VI0#VI-1#VI1#&1$@N@Eigen@C@Matrix>#d#VI-1#VI-1#VI0#VI-1#VI-1#S2_#"
+            }
+        ],
+        "file" : "/home/damien/Desktop/CopulaCDO/code/Thibault/mdmd/src/dfcop.cpp",
+        "file_last_write" : 1501099361
+    }
+]
