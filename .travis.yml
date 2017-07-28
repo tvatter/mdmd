@@ -26,7 +26,7 @@ before_install:
   - git checkout dev
   - cd ..
   - R CMD build rvinecopulib
-  - R CMD install rvinecopulib_0.0.1.9000.tar.gz
+  - R CMD install rvinecopulib
 
 repos:
   CRAN: http://cran.rstudio.com
