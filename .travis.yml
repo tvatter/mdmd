@@ -3,11 +3,6 @@ dist: trusty
 language: R
 warnings_are_errors: true
 
-r:
-  - oldrel
-  - release
-  - devel
-
 sudo: required
 
 apt_packages:
