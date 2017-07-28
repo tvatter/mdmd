@@ -6,29 +6,26 @@ warnings_are_errors: true
 sudo: required
 
 apt_packages:
-  - r-cran-BH
+  - r-cran-bh
   - r-cran-covr
-  - r-cran-graphics
-  - r-cran-grDevices
   - r-cran-lattice
-  - r-cran-Rcpp
-  - r-cran-RcppEigen
+  - r-cran-rcpp
+  - r-cran-rcppeigen
   - r-cran-statmod
-  - r-cran-stats
   - r-cran-testthat
-  - r-cran-utils
 
 before_install:
   - sudo add-apt-repository ppa:marutter/c2d4u -y
   - sudo apt-get update -q
-  - export R_PACKAGES='c("Rcpp", "RcppEigen", "BH")'
-  - Rscript -e 'withCallingHandlers(install.packages(c("Rcpp", "RcppEigen", "BH"), repos="http://cran.rstudio.com/"), warning=function(x) { message(x); quit(status=1, save="no") })'
-  - git clone https://github.com/vinecopulib/rvinecopulib
-  - cd rvinecopulib
-  - git checkout dev
-  - cd ..
-  - R CMD build rvinecopulib 
-  - R CMD INSTALL rvinecopulib
+  - Rscript -e 'devtools::install_github("vinecopulib/rvinecopulib", ref = "dev")'
+  #- export R_PACKAGES='c("Rcpp", "RcppEigen", "BH")'
+  #- Rscript -e 'withCallingHandlers(install.packages(c("Rcpp", "RcppEigen", "BH"), repos="http://cran.rstudio.com/"), warning=function(x) { message(x); quit(status=1, save="no") })'
+  #- git clone https://github.com/vinecopulib/rvinecopulib
+  #- cd rvinecopulib
+  #- git checkout dev
+  #- cd ..
+  #- R CMD build rvinecopulib 
+  #- R CMD INSTALL rvinecopulib
 
 repos:
   CRAN: http://cran.rstudio.com
