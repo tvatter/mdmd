@@ -25,7 +25,7 @@ before_install:
   - cd rvinecopulib
   - git checkout dev
   - cd ..
-  - R CMD BUILD rvinecopulib 
+  - R CMD build rvinecopulib 
   - R CMD INSTALL rvinecopulib
 
 repos:
