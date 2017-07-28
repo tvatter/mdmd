@@ -23,7 +23,7 @@ before_install:
   - sudo apt-get update -q
   - git clone https://github.com/vinecopulib/rvinecopulib
   - cd rvinecopulib
-  - git checkout origin/dev
+  - git checkout dev
   - cd ..
   - R CMD build rvinecopulib
   - R CMD install rvinecopulib_0.0.1.9000.tar.gz
