@@ -89,6 +89,7 @@ dfcop <- function(data,
   }
   fit <- dfcop_dist(prob, family_set[best], fits[[best]]$parameters)
   fit$npar <- fits[[best]]$npar
+  fit$vcov <- fits[[best]]$vcov
   
   # add the data
   if (keep_data) {
@@ -107,22 +108,28 @@ fitOne <- function(family, prob, data, rule) {
   if (family == "indep") {
     out <- list(nll = -sum(log(ddfcop(data, prob))),
                 parameters = numeric(0),
-                npar = 0)
+                npar = 0, 
+                vcov = 0)
   } else {
     bounds <- if_vec_to_matrix(get_bounds(family))
     npar <- length(bounds[,2])
     tmp <- optim_better(bounds[,2], 
                         function(par) nll(par, family),
                         lower = bounds[,1]+1e-2, upper = bounds[,3]-1e-2, 
-                        method = ifelse(npar == 1, "Brent", "L-BFGS-B"))
+                        method = ifelse(npar == 1, "Brent", "L-BFGS-B"),
+                        hessian = TRUE)
     if (is.null(tmp$err)) {
+      H <- tmp[[1]]$hessian/nrow(data)
+      vcov <- ifelse(npar == 1, 1/as.numeric(H), solve(H))
       out <- list(nll = tmp[[1]]$value,
                   parameters = tmp[[1]]$par,
-                  npar = npar)
+                  npar = npar,
+                  vcov = vcov)
     } else {
       out <- list(nll = NA,
                   parameters = NA,
-                  npar = NA)
+                  npar = NA,
+                  vcov = NA)
     }
   }
   return(out)

@@ -5,7 +5,12 @@ test_that("dummy call creates proper dfcop object", {
   fit <- dfcop(X, "indep")
   expect_s3_class(fit, "dfcop_dist")
   expect_s3_class(fit, "dfcop")
-  expect_identical(names(fit), c("prob", "bicop", "npar", "data"))
+  expect_identical(names(fit), c("prob", "bicop", "npar", "vcov", "data"))
+})
+
+test_that("family sets works", {
+  expect_error(check_family_set("imnotafamily"))
+  sapply(family_set_defs, expand_family)
 })
 
 test_that("aic/bic for dfcop works", {
@@ -22,6 +27,32 @@ test_that("aic/bic for dfcop works", {
   # Data
   X <- rdfcop(n, dfcop)
 
+  # AIC/BIC select the proper family
   expect_identical(dfcop(X, selcrit = "aic")$bicop$family, "gaussian")
   expect_identical(dfcop(X, selcrit = "bic")$bicop$family, "gaussian")
+
+})
+
+test_that("predict/fitted/loglik methods dfcop works", {
+  set.seed(0)
+  # Sample size, dimension, correlation parameter
+  n <- 1e3
+  d <- 1e1
+  rho <- 0.7
+  
+  # The model
+  prob <- runif(d)
+  dfcop <- dfcop_dist(prob, "gaussian", rho)
+  
+  # Data
+  X <- rdfcop(n, dfcop)
+  
+  # Fit
+  fit <- dfcop(X)
+  
+  # The methods work as expected
+  expect_equal(predict(fit, X), fitted(fit))
+  expect_is(logLik(fit), "numeric")
+  expect_equivalent(names(attributes(logLik(fit))), "df")
+
 })

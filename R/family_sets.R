@@ -18,13 +18,11 @@ family_set_twopar <- c(
   "t", family_set_bb
 )
 
-family_set_parametric <- c(
+family_set_all <- c(
   "indep", family_set_onepar, family_set_twopar
 )
-
-family_set_all <- family_set_parametric
-family_set_rotations <- setdiff(c(family_set_archimedean,
-                                  family_set_bb), "frank")
+# family_set_rotations <- setdiff(c(family_set_archimedean,
+#                                   family_set_bb), "frank")
 
 family_set_defs <- c(
   "archimedean", "elliptical", "bbs", "oneparametric", "twoparametric", 
@@ -63,4 +61,23 @@ get_bounds <- function(family) {
                      c(0, 1, 200)),
          bb8 = rbind(c(1, 2, 200),
                      c(0, 0.5, 1)))
+}
+
+#' Internal: Expand shortcuts in the familyset.
+#' @noRd
+expand_family_set <- function(family_set) {
+  unique(unlist(lapply(family_set, expand_family)))
+}
+
+expand_family <- function(family) {
+  switch(
+    family,
+    "archimedean"   = family_set_archimedean,
+    "ellipiltical"  = family_set_elliptical,
+    "bbs"           = family_set_bb,
+    "oneparametric" = family_set_onepar,
+    "twoparametric" = family_set_twopar,
+    "all"           = family_set_all,
+    family  # default is no expansion
+  )
 }

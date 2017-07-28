@@ -1,9 +1,13 @@
 context("Class 'dfcop_dist'")
 
-test_that("constructor creates proper dfcop_dist object", {
+test_that("constructor and print method work", {
   dist <- dfcop_dist(c(0.5, 0.5), "gumbel", 3)
+  
   expect_s3_class(dist, "dfcop_dist")
   expect_identical(names(dist), c("prob", "bicop"))
+  
+  expect_output(print(dist))
+  expect_output(print(dfcop_dist(c(0.5,0.5))))
 })
 
 test_that("d/r functions work", {
