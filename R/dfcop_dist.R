@@ -2,7 +2,8 @@
 #' 
 #' A S3 class to store discrete factor copula distributions.
 #'
-#' @param prob the marginal probabilities, a vector of numbers in (0,1).
+#' @param prob the marginal probabilities, a vector of numbers in (0,1) or a 
+#' list of vectors with numbers in (0,1).
 #' @param family the copula family, a string containing the family name (see
 #' *Details* for all possible families).
 #' @param parameters a vector or matrix of copula paramters.
@@ -43,10 +44,26 @@
 dfcop_dist <- function(prob, 
                        family = "indep", 
                        parameters = numeric(0)) {
-  stopifnot(is.vector(prob) && all(prob > 0 && prob < 1))
+  if(is.vector(prob)) {
+    stopifnot(all(prob > 0 && prob < 1))
+    nmax <- rep(2, length(prob))
+    binary <- TRUE
+  }else if(is.list(prob)){
+    lapply(prob, function(x) stopifnot(is.vector(prob) && 
+                                         all(x >= 0 && sum(x) != 1)))
+    nmax <- sapply(prob, length)
+    if(all(nmax==2)){ 
+      ## recast into binary dfcop_dist
+      prob <- sapply(prob, function(x) x[2])
+    }else{
+      binary <- FALSE
+    }
+  }else stop()
   bicop <- bicop_dist(family, 0, parameters)
   dist <- list(prob = prob,
-               bicop = bicop)
+               bicop = bicop,
+               binary = binary,
+               nmax = nmax)
   structure(dist, class = "dfcop_dist")
 }
 
@@ -56,18 +73,21 @@ print.dfcop_dist <- function(x, ...) {
     cat("Discrete factor copula ('dfcop_dist'): ",
         "dimension = ", length(x$prob),
         ", family = ", x$bicop$family,
+        ", binary = ", as.character(x$binary),
         sep = "")
   } else {
     cat("Discrete factor copula ('dfcop_dist'): ",
         "dimension = ", length(x$prob),
         ", family = ", x$bicop$family,
         ", dependence parameters = ", x$bicop$parameters,
+        ", binary = ", as.character(x$binary),
         sep = "")
   }
 }
 
 #' @rdname dfcop_dist
-#' @param x a binary vector of the same length as prob
+#' @param x an integer vector of the same length as prob, or a matrix with 
+#' number of columns equal to the length of prob
 #' @param ngrid number of nodes and weights for the Gaussian quadrature
 #' @examples  
 #' # evaluate the probability mass function
@@ -82,19 +102,42 @@ ddfcop <- function(x, prob,
                    parameters = numeric(0),
                    ngrid = 100) {
   dfcop <- args2dfcop(prob, family, parameters)
-  stopifnot((is.vector(x) || is.matrix(x)) && all(x == 0 || x == 1))
+  stopifnot((is.vector(x) || is.matrix(x)))
+  if(dfcop$binary) stopifnot(all(x == 0 || x == 1))
+  else stopifnot(all(sapply(1:length(dfcop$prob), 
+                            function(i) x[i] %in% 0:dfcop$nmax[i])))
   x <- if_vec_to_matrix(x)
   stopifnot(ncol(x) == length(dfcop$prob))
   stopifnot(length(ngrid) == 1 && ngrid > 0)
   rule <- gauss.quad.prob(ngrid, dist = "uniform", l = 0, u = 1)
-  pv <- sapply(dfcop$prob, function(p) hbicop(cbind(p, rule$nodes), 
-                                              cond_var = 2, 
-                                              dfcop$bicop))
-  dfcop_pdf_cpp(rule$weights, pv, x)
-  # pvt <- t(pv)
-  # apply(x, 1, function(xi) 
-  #   sum(apply(pvt^as.vector(xi)*(1-pvt)^(1-as.vector(xi)), 
-  #             2, prod)*rule$weights))
+  if(dfcop$binary){
+    pv <- sapply(dfcop$prob, function(p) hbicop(cbind(p, rule$nodes), 
+                                                cond_var = 2, 
+                                                dfcop$bicop))
+    pdf <- dfcop_pdf_cpp(rule$weights, pv, x)
+    # pvt <- t(pv)
+    # apply(x, 1, function(xi) 
+    #   sum(apply(pvt^as.vector(xi)*(1-pvt)^(1-as.vector(xi)), 
+    #             2, prod)*rule$weights))
+  }else{
+    pv <- sapply(seq_along(prob), function(i){
+      pis <- dfcop$prob[[i]]
+      if(x[i]==0){ 
+        p2 <- 1
+        p1 <- sum(pis[-1])
+      }else if(x[i]==dfcop$nmax[i]){
+        p2 <- rev(pis)[1]
+        p1 <- 0
+      }else{
+        p2 <- 1 - sum(pis[1:(x[i])])
+        p2 <- sum(pis[(1+x[i]):length(pis)])
+      }
+      hbicop(cbind(p2, rule$nodes), cond_var = 2, dfcop$bicop) - 
+        hbicop(cbind(p1, rule$nodes), cond_var = 2, dfcop$bicop)
+    })
+    sum(apply(pv, 1, prod)*rule$weights)
+  }
+  return(pdf)
 }
 
 
@@ -116,6 +159,13 @@ rdfcop <- function(n, prob,
   prob <- dfcop$prob
   V <- runif(n)
   U <- matrix(runif(n*length(prob)), nrow = n)
-  U <- apply(U, 2, function(u) hbicop(cbind(u,V), 2, dfcop$bicop, inverse = TRUE))
-  sapply(seq_along(prob), function(i) ifelse(U[,i] >= prob[i], 0, 1))
+  U <- apply(U, 2, function(u) 
+    hbicop(cbind(u,V), 2, dfcop$bicop, inverse = TRUE))
+  if(dfcop$binary){
+    x <- sapply(seq_along(prob), function(i) ifelse(U[,i] >= prob[i], 0, 1))
+  }else{
+    x <- sapply(seq_along(prob), function(i)
+      dfcop$nmax[i] - which.first(U[,i] <= cumsum(rev(prob[[i]]))))
+  }
+  return(x)
 }

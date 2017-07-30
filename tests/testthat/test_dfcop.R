@@ -5,7 +5,8 @@ test_that("dummy call creates proper dfcop object", {
   fit <- dfcop(X, "indep")
   expect_s3_class(fit, "dfcop_dist")
   expect_s3_class(fit, "dfcop")
-  expect_identical(names(fit), c("prob", "bicop", "npar", "vcov", "data"))
+  expect_identical(names(fit), c("prob", "bicop", "binary", "nmax","npar", 
+                                 "vcov", "data"))
 })
 
 test_that("family sets works", {

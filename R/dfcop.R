@@ -58,7 +58,7 @@ dfcop <- function(data,
   if(is.data.frame(data)) 
     data <- as.matrix(data)
   stopifnot(ncol(data) >= 2)
-  stopifnot(all(data == 0 || data == 1))
+  stopifnot(all(data == floor(data)) )
   
   # family_set can only use standard family names in cpp
   family_set <- family_set_all_defs[pmatch(family_set, family_set_all_defs)]
@@ -71,8 +71,13 @@ dfcop <- function(data,
   stopifnot(length(ngrid) == 1 && ngrid > 0)
   
   # fit margins
-  prob <- apply(data, 2, mean)
-  
+  if(all(data == 0 || data == 1))
+    prob <- apply(data, 2, mean)
+  else{
+    m <- apply(data, 2, function(x) max(x))
+    prob <- lapply(seq_along(m), function(i) 
+      sapply(seq_along(m[i]), function(y) mean(data[,i]==y)))
+  }  
   # fit all copula models
   rule <- gauss.quad.prob(ngrid, dist = "uniform", l = 0, u = 1)
   fits <- lapply(family_set, function(family) fitOne(family, prob, data, rule))
@@ -100,21 +105,20 @@ dfcop <- function(data,
 }
 
 fitOne <- function(family, prob, data, rule) {
-  nll <- function(x, family) {
-    pv <- sapply(prob, function(p) 
-      hbicop(cbind(p, rule$nodes), cond_var = 2, family, 0, x))
-    -sum(log(dfcop_pdf_cpp(rule$weights, pv, data)))
-  }
   if (family == "indep") {
     out <- list(nll = -sum(log(ddfcop(data, prob))),
                 parameters = numeric(0),
                 npar = 0, 
                 vcov = 0)
   } else {
+    nll <- function(par){
+      dfcop <- args2dfcop(prob, family, par)
+      -sum(log(ddfcop(data, dfcop)))
+    }
     bounds <- if_vec_to_matrix(get_bounds(family))
     npar <- length(bounds[,2])
     tmp <- optim_better(bounds[,2], 
-                        function(par) nll(par, family),
+                        function(par) nll(par),
                         lower = bounds[,1]+1e-2, upper = bounds[,3]-1e-2, 
                         method = ifelse(npar == 1, "Brent", "L-BFGS-B"),
                         hessian = TRUE)
