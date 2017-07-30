@@ -9,9 +9,6 @@
 if_vec_to_matrix <- function(u) {
   if (NCOL(u) == 1)
     u <- matrix(u, 1, length(u))
-  if (!is.matrix(u))
-    u <- as.matrix(u)
-  
   u
 }
 
@@ -27,26 +24,6 @@ args2dfcop <- function(prob, family = "indep", parameters = numeric(0)) {
   } else {
     return(dfcop_dist(prob, family, parameters))
   }
-}
-
-#' Internal: Expand shortcuts in the familyset.
-#' @noRd
-expand_family_set <- function(family_set) {
-  unique(unlist(lapply(family_set, expand_family)))
-}
-
-expand_family <- function(family) {
-  switch(
-    family,
-    "archimedean"   = family_set_archimedean,
-    "ellipiltical"  = family_set_elliptical,
-    "bbs"           = family_set_bb,
-    "oneparametric" = family_set_onepar,
-    "twoparametric" = family_set_twopar,
-    "parametric"    = family_set_parametric,
-    "all"           = family_set_all,
-    family  # default is no expansion
-  )
 }
 
 factory <- function(fun)

@@ -30,7 +30,7 @@ rdfcop(n, prob, family = "indep", parameters = numeric(0))
 An object of class \code{dfcop_dist}.
 }
 \description{
-A dicrete factor copula distribution is specified by:
+A S3 class to store discrete factor copula distributions.
 }
 \details{
 The implemented families listed below. Partial matching is activated, i.e.,

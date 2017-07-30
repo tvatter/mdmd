@@ -25,10 +25,10 @@ fit statistics and using \code{fitted()}).}
 An object inherting from \code{dfcop} and \code{dfcop_dist}.
 }
 \description{
-Discrete factor copula models
+Fit discrete factor copula models to data.
 }
 \details{
-In addition, to the families in \code{dfcop_dist()}, the following convenience
+In addition to the families in \code{dfcop_dist()}, the following convenience
 definition from  can be used (and combined):
 \describe{
 \item{"all"}{all families}.
@@ -56,6 +56,6 @@ X <- rdfcop(n, dfcop)
 
 # Fit
 fit <- dfcop(X)
-fit$dist
+fit
 
 }

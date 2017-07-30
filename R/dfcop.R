@@ -1,6 +1,6 @@
 #' Discrete factor copula models
 #' 
-#' @aliases dfcop dfcop
+#' Fit discrete factor copula models to data.
 #'
 #' @param data a binary matrix or data.frame.
 #' @param family_set a character vector of families; as in `dfcop_dist()`,
@@ -89,6 +89,7 @@ dfcop <- function(data,
   }
   fit <- dfcop_dist(prob, family_set[best], fits[[best]]$parameters)
   fit$npar <- fits[[best]]$npar
+  fit$vcov <- fits[[best]]$vcov
   
   # add the data
   if (keep_data) {
@@ -107,28 +108,47 @@ fitOne <- function(family, prob, data, rule) {
   if (family == "indep") {
     out <- list(nll = -sum(log(ddfcop(data, prob))),
                 parameters = numeric(0),
-                npar = 0)
+                npar = 0, 
+                vcov = 0)
   } else {
     bounds <- if_vec_to_matrix(get_bounds(family))
     npar <- length(bounds[,2])
     tmp <- optim_better(bounds[,2], 
                         function(par) nll(par, family),
                         lower = bounds[,1]+1e-2, upper = bounds[,3]-1e-2, 
-                        method = ifelse(npar == 1, "Brent", "L-BFGS-B"))
+                        method = ifelse(npar == 1, "Brent", "L-BFGS-B"),
+                        hessian = TRUE)
     if (is.null(tmp$err)) {
+      H <- tmp[[1]]$hessian/nrow(data)
+      vcov <- ifelse(npar == 1, 1/as.numeric(H), solve(H))
       out <- list(nll = tmp[[1]]$value,
                   parameters = tmp[[1]]$par,
-                  npar = npar)
+                  npar = npar,
+                  vcov = vcov)
     } else {
       out <- list(nll = NA,
                   parameters = NA,
-                  npar = NA)
+                  npar = NA,
+                  vcov = NA)
     }
   }
   return(out)
 }
 
-#' Predictions and fitted values for a discrete factor copula model
+#' S3 methods for discrete factor copula model
+#'
+#' Currently available:
+#' \describe{
+#' \item{`predict`}{Predict the probabilities of new observations.}
+#' \item{`fitted`}{Fitted probabilities.}
+#' \item{`logLik`}{Log-likelihood at the MLE.}
+#' \item{`AIC`}{Akaike's Information Criterion (see \link{AIC}).}
+#' \item{`BIC`}{Bayesian Information Criterion (see \link{BIC}).}
+#' \item{`coef`}{The MLE.}
+#' \item{`vcov`}{Variance-covariance matrix at the MLE.}
+#' }
+#'
+#' @aliases fitted.dfcop logLik.dfcop AIC.dfcop BIC.dfcop coef.dfcop vcov.dfcop
 #'
 #' @param object a `dfcop` object.
 #' @param newdata points where the fit shall be evaluated.
@@ -151,6 +171,11 @@ fitOne <- function(family, prob, data, rule) {
 #' fit <- dfcop(X)
 #' all.equal(predict(fit, X), fitted(fit))
 #' 
+#' # Other methods
+#' logLik(fit)
+#' AIC(fit)
+#' BIC(fit)
+#' 
 #' @export
 predict.dfcop <- function(object, newdata, ...) {
   if (is.null(newdata) && is.null(object$data))
@@ -168,9 +193,22 @@ fitted.dfcop <- function(object, ...) {
   ddfcop(object$data, object)
 }
 
+#' @rdname predict.dfcop
+#' @export
 logLik.dfcop <- function(object, ...) {
   if (is.null(object$data))
     stop("data have not been stored, use keep_data = TRUE when fitting.")
-  structure(sum(log(ddfcop(object$data, object))), "df" = object$npar)
+  val <- sum(log(ddfcop(object$data, object)))
+  attr(val, "nobs") <- nrow(object$data)
+  attr(val, "df") <- object$npar
+  class(val) <- "logLik"
+  val
 }
 
+#' @rdname predict.dfcop
+#' @export
+coef.dfcop <- function(object, ...) as.numeric(object$bicop$parameters)
+
+#' @rdname predict.dfcop
+#' @export
+vcov.dfcop <- function(object, ...) object$vcov

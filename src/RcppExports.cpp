@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // dfcop_pdf_cpp
 Eigen::VectorXd dfcop_pdf_cpp(const Eigen::VectorXd& w, const Eigen::MatrixXd& pv, const Eigen::MatrixXd& x);
-RcppExport SEXP mdmd_dfcop_pdf_cpp(SEXP wSEXP, SEXP pvSEXP, SEXP xSEXP) {
+RcppExport SEXP _mdmd_dfcop_pdf_cpp(SEXP wSEXP, SEXP pvSEXP, SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"mdmd_dfcop_pdf_cpp", (DL_FUNC) &mdmd_dfcop_pdf_cpp, 3},
+    {"_mdmd_dfcop_pdf_cpp", (DL_FUNC) &_mdmd_dfcop_pdf_cpp, 3},
     {NULL, NULL, 0}
 };
 

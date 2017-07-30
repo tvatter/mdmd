@@ -1,6 +1,6 @@
 #' A discrete factor copula distribution
 #' 
-#' A dicrete factor copula distribution is specified by:
+#' A S3 class to store discrete factor copula distributions.
 #'
 #' @param prob the marginal probabilities, a vector of numbers in (0,1).
 #' @param family the copula family, a string containing the family name (see
@@ -52,11 +52,18 @@ dfcop_dist <- function(prob,
 
 #' @export
 print.dfcop_dist <- function(x, ...) {
-  cat("Discrete factor copula ('dfcop_dist'): ",
-      "dimension = ", length(x$prob),
-      ", family = ", x$bicop$family,
-      ", dependence parameters = ", x$bicop$parameters,
-      sep = "")
+  if (x$bicop$family == "indep") {
+    cat("Discrete factor copula ('dfcop_dist'): ",
+        "dimension = ", length(x$prob),
+        ", family = ", x$bicop$family,
+        sep = "")
+  } else {
+    cat("Discrete factor copula ('dfcop_dist'): ",
+        "dimension = ", length(x$prob),
+        ", family = ", x$bicop$family,
+        ", dependence parameters = ", x$bicop$parameters,
+        sep = "")
+  }
 }
 
 #' @rdname dfcop_dist
